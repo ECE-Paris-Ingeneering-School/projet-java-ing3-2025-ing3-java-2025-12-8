@@ -35,7 +35,7 @@ public class MenuClientFrame extends JFrame {
         panel.add(btnPanier);
 
         JButton btnHistorique = new JButton("Mes commandes");
-        btnHistorique.addActionListener(e -> JOptionPane.showMessageDialog(this, "Historique à venir !"));
+        btnHistorique.addActionListener(e -> new HistoriqueCommandesFrame(client).setVisible(true));
         panel.add(btnHistorique);
 
         JButton btnDeconnexion = new JButton("Déconnexion");

@@ -3,7 +3,6 @@ package Vue;
 import Modele.Article;
 import Modele.Client;
 import Modele.Panier;
-import Controleur.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,12 +40,7 @@ public class PanierFrame extends JFrame {
         JPanel bas = new JPanel(new GridLayout(1, 3, 10, 10));
 
         JButton btnCommander = new JButton("Passer commande");
-        btnCommander.addActionListener(e -> {
-            ClientControleur controleur = new ClientControleur();
-            controleur.passerCommande(client, panier);
-            modelListe.clear();
-            JOptionPane.showMessageDialog(this, "Commande enregistrée !");
-        });
+        btnCommander.addActionListener(e -> JOptionPane.showMessageDialog(this, "Commande simulée (à venir)"));
         bas.add(btnCommander);
 
         JButton btnVider = new JButton("Vider le panier");
