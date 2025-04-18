@@ -2,6 +2,7 @@ package DAO;
 
 import Modele.Client;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class ClientDAO {
 

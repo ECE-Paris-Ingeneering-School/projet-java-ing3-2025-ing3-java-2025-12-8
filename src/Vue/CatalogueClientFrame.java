@@ -5,6 +5,7 @@ import Modele.Article;
 import Modele.Client;
 import Modele.Panier;
 
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
