@@ -6,7 +6,7 @@ import java.awt.*;
 public class AdminMenuFrame extends JFrame {
 
     public AdminMenuFrame() {
-        setTitle("Menu Administrateur");
+        setTitle("Menu Admin");
         setSize(300, 250);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
