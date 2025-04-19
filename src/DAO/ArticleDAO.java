@@ -12,10 +12,10 @@ public class ArticleDAO {
     public List<Article> getAllArticles() {
         List<Article> articles = new ArrayList<>();
         String sql = """
-            SELECT a.*, m.nom AS nom_marque
-            FROM article a
-            JOIN marque m ON a.id_marque = m.id
-        """;
+        SELECT a.*, m.nom AS nom_marque
+        FROM article a
+        JOIN marque m ON a.id_marque = m.id
+    """;
 
         try (Connection conn = DBConnection.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
@@ -29,7 +29,8 @@ public class ArticleDAO {
                         rs.getFloat("prix_unitaire"),
                         rs.getObject("prix_gros") != null ? rs.getFloat("prix_gros") : null,
                         rs.getObject("quantite_gros") != null ? rs.getInt("quantite_gros") : null,
-                        rs.getInt("id_marque")
+                        rs.getInt("id_marque"),
+                        rs.getInt("quantite_stock") // nouveau champ
                 );
                 articles.add(article);
             }
@@ -43,7 +44,8 @@ public class ArticleDAO {
 
     // 2. Ajouter un article
     public void insertArticle(Article article) {
-        String sql = "INSERT INTO article (id, nom, marque, prix_unitaire, prix_gros, quantite_gros, id_marque) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO article (id, nom, marque, prix_unitaire, prix_gros, quantite_gros, id_marque, quantite_stock) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
 
         try (Connection conn = DBConnection.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -66,6 +68,7 @@ public class ArticleDAO {
             }
 
             stmt.setInt(7, article.getIdMarque());
+            stmt.setInt(8, article.getQuantiteStock());
 
             stmt.executeUpdate();
             System.out.println("Article ajouté : " + article.getNom());
@@ -112,7 +115,8 @@ public class ArticleDAO {
                         rs.getFloat("prix_unitaire"),
                         rs.getObject("prix_gros") != null ? rs.getFloat("prix_gros") : null,
                         rs.getObject("quantite_gros") != null ? rs.getInt("quantite_gros") : null,
-                        rs.getInt("id_marque")
+                        rs.getInt("id_marque"),
+                        rs.getInt("quantite_stock") // récupère aussi le stock ici
                 );
             }
 
@@ -122,4 +126,20 @@ public class ArticleDAO {
 
         return article;
     }
+    public void mettreAJourStock(Connection conn, int idArticle, int quantiteRetiree) {
+        String sql = "UPDATE article SET quantite_stock = quantite_stock - ? WHERE id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, quantiteRetiree);
+            stmt.setInt(2, idArticle);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Erreur mise à jour stock : " + e.getMessage());
+        }
+    }
+
+
+
+
+
 }

@@ -8,9 +8,10 @@ public class Article {
     private Float prixGros;        // null si pas de tarif de gros
     private Integer quantiteGros;  // null si pas de tarif de gros
     private int idMarque;
+    private int quantiteStock;
 
     // Constructeur complet
-    public Article(int id, String nom, String marque, float prixUnitaire, Float prixGros, Integer quantiteGros, int idMarque) {
+    public Article(int id, String nom, String marque, float prixUnitaire, Float prixGros, Integer quantiteGros, int idMarque, int quantiteStock) {
         this.id = id;
         this.nom = nom;
         this.marque = marque;
@@ -18,6 +19,7 @@ public class Article {
         this.prixGros = prixGros;
         this.quantiteGros = quantiteGros;
         this.idMarque = idMarque;
+        this.quantiteStock = quantiteStock;
     }
 
     // Getters
@@ -28,6 +30,9 @@ public class Article {
     public Float getPrixGros() { return prixGros; }
     public Integer getQuantiteGros() { return quantiteGros; }
     public int getIdMarque() { return idMarque; }
+    public int getQuantiteStock() {
+        return quantiteStock;
+    }
 
     // Setters
     public void setId(int id) { this.id = id; }

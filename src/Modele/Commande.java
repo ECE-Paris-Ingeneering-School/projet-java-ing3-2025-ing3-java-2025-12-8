@@ -23,4 +23,8 @@ public class Commande {
     public int getId() { return id; }
     public LocalDateTime getDateCommande() { return dateCommande; }
     public float getTotal() { return total; }
+    public int getIdClient() {
+        return idClient;
+    }
+
 }

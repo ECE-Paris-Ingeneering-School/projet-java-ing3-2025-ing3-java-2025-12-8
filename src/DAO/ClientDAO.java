@@ -9,21 +9,18 @@ public class ClientDAO {
 
     public void creerClient(String nom, String email, String motDePasse) {
         String sql = "INSERT INTO utilisateur (nom, email, mot_de_passe, type) VALUES (?, ?, ?, 'client')";
-
         try (Connection conn = DBConnection.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, nom);
             stmt.setString(2, email);
             stmt.setString(3, motDePasse);
-
             stmt.executeUpdate();
-            System.out.println("Compte client créé avec succès.");
-
         } catch (SQLException e) {
-            System.err.println("Erreur lors de la création du compte : " + e.getMessage());
+            System.err.println("Erreur création client : " + e.getMessage());
         }
     }
+
+
 
     public Client getClientByEmailAndPassword(String email, String password) {
         Client client = null;

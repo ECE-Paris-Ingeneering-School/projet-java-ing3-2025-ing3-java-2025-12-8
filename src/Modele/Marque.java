@@ -9,11 +9,17 @@ public class Marque {
         this.nom = nom;
     }
 
-    public int getId() { return id; }
-    public String getNom() { return nom; }
+    public int getId() {
+        return id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
 
     @Override
     public String toString() {
-        return nom;
+        return id + " - " + nom;
     }
 }
+

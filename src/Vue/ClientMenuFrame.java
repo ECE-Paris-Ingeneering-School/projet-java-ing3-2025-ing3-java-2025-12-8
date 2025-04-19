@@ -6,14 +6,15 @@ import Modele.Panier;
 import javax.swing.*;
 import java.awt.*;
 
-public class MenuClientFrame extends JFrame {
+public class ClientMenuFrame extends JFrame {
 
     private Client client;
     private Panier panier;
 
-    public MenuClientFrame(Client client) {
+
+    public ClientMenuFrame(Client client, Panier panier) {
         this.client = client;
-        this.panier = new Panier(); // panier partagé
+        this.panier = panier;
 
         setTitle("Espace Client - Bienvenue " + client.getNom());
         setSize(400, 300);
@@ -27,23 +28,26 @@ public class MenuClientFrame extends JFrame {
         panel.add(labelBienvenue);
 
         JButton btnCatalogue = new JButton("Voir le catalogue");
-        btnCatalogue.addActionListener(e -> new CatalogueClientFrame(client, panier).setVisible(true));
+        btnCatalogue.addActionListener(e -> new ClientCatalogueFrame(client, panier).setVisible(true));
         panel.add(btnCatalogue);
 
         JButton btnPanier = new JButton("Mon panier");
         btnPanier.addActionListener(e -> new PanierFrame(client, panier).setVisible(true));
         panel.add(btnPanier);
 
-        JButton btnHistorique = new JButton("Mes commandes");
-        btnHistorique.addActionListener(e -> new HistoriqueCommandesFrame(client).setVisible(true));
-        panel.add(btnHistorique);
 
         JButton btnDeconnexion = new JButton("Déconnexion");
         btnDeconnexion.addActionListener(e -> {
             dispose();
-            new ConnexionClientFrame().setVisible(true);
+            new ConnexionFrame().setVisible(true);
         });
         panel.add(btnDeconnexion);
+
+        JButton btnCommandes = new JButton("Mes commandes");
+        btnCommandes.addActionListener(e -> new ClientCommandesFrame(client).setVisible(true));
+        panel.add(btnCommandes);
+
+
 
         add(panel);
     }
