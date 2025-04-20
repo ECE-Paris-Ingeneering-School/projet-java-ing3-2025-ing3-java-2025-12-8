@@ -50,5 +50,21 @@ public class AdminDAO {
         }
     }
 
+    public void updateAdmin(int id, String nom, String email, String motDePasse) {
+        String sql = "UPDATE utilisateur SET nom = ?, email = ?, mot_de_passe = ? WHERE id = ? AND type = 'admin'";
+
+        try (Connection conn = DBConnection.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nom);
+            stmt.setString(2, email);
+            stmt.setString(3, motDePasse);
+            stmt.setInt(4, id);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Erreur mise à jour admin : " + e.getMessage());
+        }
+    }
 
 }

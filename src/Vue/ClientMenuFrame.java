@@ -48,6 +48,9 @@ public class ClientMenuFrame extends JFrame {
         panel.add(btnCommandes);
 
 
+        JButton btnCompte = new JButton("Mon compte");
+        btnCompte.addActionListener(e -> new ProfilFrame(client).setVisible(true));
+        panel.add(btnCompte);
 
         add(panel);
     }

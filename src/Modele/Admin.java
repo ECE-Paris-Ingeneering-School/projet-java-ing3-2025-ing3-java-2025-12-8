@@ -17,4 +17,17 @@ public class Admin {
     public String getNom() { return nom; }
     public String getEmail() { return email; }
     public String getMotDePasse() { return motDePasse; }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
+    }
+
 }

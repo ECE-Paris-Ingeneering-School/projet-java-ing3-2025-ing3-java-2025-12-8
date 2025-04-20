@@ -74,7 +74,7 @@ public class ConnexionFrame extends JFrame {
                 if (admin != null) {
                     JOptionPane.showMessageDialog(this, "Bienvenue " + admin.getNom());
                     dispose();
-                    new AdminMenuFrame().setVisible(true);
+                    new AdminMenuFrame(admin).setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(this, "Identifiants admin incorrects.");
                 }
