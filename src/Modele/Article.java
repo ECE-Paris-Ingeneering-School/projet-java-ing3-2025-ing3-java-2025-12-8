@@ -3,10 +3,10 @@ package Modele;
 public class Article {
     private int id;
     private String nom;
-    private String marque;         // Nom de la marque (optionnel, jointure dans DAO)
+    private String marque;
     private float prixUnitaire;
-    private Float prixGros;        // null si pas de tarif de gros
-    private Integer quantiteGros;  // null si pas de tarif de gros
+    private Float prixGros;
+    private Integer quantiteGros;
     private int idMarque;
     private int quantiteStock;
 
