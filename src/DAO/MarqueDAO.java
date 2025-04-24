@@ -8,7 +8,6 @@ import java.util.List;
 
 public class MarqueDAO {
 
-    // Récupère toutes les marques
     public List<Marque> getAllMarques() {
         List<Marque> marques = new ArrayList<>();
         String sql = "SELECT * FROM marque";
