@@ -15,6 +15,8 @@ public class AdminCatalogueFrame extends JFrame {
     private DefaultTableModel model;
     private ArticleDAO articleDAO;
     private AdminControleur controleur;
+    private JTextField tfRecherche;
+
 
     public AdminCatalogueFrame(AdminControleur controleur) {
         this.controleur = controleur;
@@ -27,6 +29,18 @@ public class AdminCatalogueFrame extends JFrame {
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        // Barre de recherche
+        JPanel recherchePanel = new JPanel(new BorderLayout());
+        recherchePanel.add(new JLabel("Rechercher : "), BorderLayout.WEST);
+
+        tfRecherche = new JTextField();
+        recherchePanel.add(tfRecherche, BorderLayout.CENTER);
+
+        panel.add(recherchePanel, BorderLayout.NORTH);
+
+// Action de recherche
+        tfRecherche.addActionListener(e -> filtrerArticles());
+
 
         JLabel label = new JLabel("Catalogue des articles", JLabel.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 18));
@@ -111,4 +125,25 @@ public class AdminCatalogueFrame extends JFrame {
             JOptionPane.showMessageDialog(this, "Veuillez sélectionner un article à supprimer.");
         }
     }
+    private void filtrerArticles() {
+        String recherche = tfRecherche.getText().toLowerCase();
+        model.setRowCount(0); // Vide le tableau
+
+        for (Article a : new ArticleDAO().getAllArticles()) {
+            if (a.getNom().toLowerCase().contains(recherche) ||
+                    a.getMarque().toLowerCase().contains(recherche)) {
+
+                model.addRow(new Object[]{
+                        a.getId(),
+                        a.getNom(),
+                        a.getMarque(),
+                        a.getPrixUnitaire(),
+                        a.getPrixGros() != null ? a.getPrixGros() : "-",
+                        a.getQuantiteGros() != null ? a.getQuantiteGros() : "-",
+                        a.getQuantiteStock()
+                });
+            }
+        }
+    }
+
 }

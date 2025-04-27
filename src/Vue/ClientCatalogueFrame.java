@@ -15,54 +15,63 @@ public class ClientCatalogueFrame extends JFrame {
     private Client client;
     private Panier panier;
     private JTable tableArticles;
+    private DefaultTableModel model;
     private JSpinner spinnerQuantite;
+    private JTextField tfRecherche;
 
     public ClientCatalogueFrame(Client client, Panier panier) {
         this.client = client;
         this.panier = panier;
 
         setTitle("Catalogue - Espace Client");
-        setSize(800, 450);
+        setSize(800, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+        // ✅ Header combiné recherche + titre
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
+
+        // Barre de recherche
+        JPanel recherchePanel = new JPanel(new BorderLayout());
+        recherchePanel.add(new JLabel("Rechercher : "), BorderLayout.WEST);
+
+        tfRecherche = new JTextField();
+        recherchePanel.add(tfRecherche, BorderLayout.CENTER);
+        tfRecherche.addActionListener(e -> filtrerArticles());
+
+        // Titre
         JLabel label = new JLabel("Catalogue des articles", JLabel.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(label, BorderLayout.NORTH);
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Récupération des articles
-        ArticleDAO articleDAO = new ArticleDAO();
-        List<Article> articles = articleDAO.getAllArticles();
+        // Ajout des deux dans header
+        headerPanel.add(recherchePanel);
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 10))); // espace
+        headerPanel.add(label);
 
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // ✅ Tableau
         String[] columns = {"ID", "Nom", "Marque", "Prix Unitaire (€)", "Prix Gros (€)", "Quantité pour prix gros", "Stock"};
-        DefaultTableModel model = new DefaultTableModel(columns, 0) {
+        model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
 
-        for (Article a : articles) {
-            model.addRow(new Object[]{
-                    a.getId(),
-                    a.getNom(),
-                    a.getMarque(),
-                    a.getPrixUnitaire(),
-                    a.getPrixGros() != null ? a.getPrixGros() : "-",
-                    a.getQuantiteGros() != null ? a.getQuantiteGros() : "-",
-                    a.getQuantiteStock()
-            });
-        }
-
         tableArticles = new JTable(model);
         tableArticles.setRowHeight(25);
         JScrollPane scrollPane = new JScrollPane(tableArticles);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Bas : sélection de quantité + boutons
+        chargerArticles(); // chargement initial
+
+        // ✅ Bas : Quantité + boutons
         JPanel panelBas = new JPanel(new FlowLayout());
 
         panelBas.add(new JLabel("Quantité :"));
@@ -80,6 +89,43 @@ public class ClientCatalogueFrame extends JFrame {
         panel.add(panelBas, BorderLayout.SOUTH);
 
         add(panel);
+    }
+
+    private void chargerArticles() {
+        model.setRowCount(0);
+        List<Article> articles = new ArticleDAO().getAllArticles();
+        for (Article a : articles) {
+            model.addRow(new Object[]{
+                    a.getId(),
+                    a.getNom(),
+                    a.getMarque(),
+                    a.getPrixUnitaire(),
+                    a.getPrixGros() != null ? a.getPrixGros() : "-",
+                    a.getQuantiteGros() != null ? a.getQuantiteGros() : "-",
+                    a.getQuantiteStock()
+            });
+        }
+    }
+
+    private void filtrerArticles() {
+        String recherche = tfRecherche.getText().toLowerCase();
+        model.setRowCount(0);
+
+        for (Article a : new ArticleDAO().getAllArticles()) {
+            if (a.getNom().toLowerCase().contains(recherche) ||
+                    a.getMarque().toLowerCase().contains(recherche)) {
+
+                model.addRow(new Object[]{
+                        a.getId(),
+                        a.getNom(),
+                        a.getMarque(),
+                        a.getPrixUnitaire(),
+                        a.getPrixGros() != null ? a.getPrixGros() : "-",
+                        a.getQuantiteGros() != null ? a.getQuantiteGros() : "-",
+                        a.getQuantiteStock()
+                });
+            }
+        }
     }
 
     private void ajouterAuPanier() {
