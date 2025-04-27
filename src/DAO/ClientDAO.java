@@ -2,31 +2,28 @@ package DAO;
 
 import Modele.Client;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class ClientDAO {
 
-
+    // Crée un nouveau client dans la base de données
     public void creerClient(String nom, String email, String motDePasse) {
         String sql = "INSERT INTO utilisateur (nom, email, mot_de_passe, type) VALUES (?, ?, ?, 'client')";
         try (Connection conn = DBConnection.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, nom);
             stmt.setString(2, email);
             stmt.setString(3, motDePasse);
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             System.err.println("Erreur création client : " + e.getMessage());
         }
     }
 
-
-
+    // Recherche un client par son email et son mot de passe (connexion client)
     public Client getClientByEmailAndPassword(String email, String password) {
         Client client = null;
-
         String sql = "SELECT * FROM utilisateur WHERE email = ? AND mot_de_passe = ? AND type = 'client'";
 
         try (Connection conn = DBConnection.getConnexion();
@@ -50,13 +47,12 @@ public class ClientDAO {
             System.err.println("Erreur lors de la connexion client : " + e.getMessage());
         }
 
-
-
         return client;
     }
 
-    public List<Client> getAllClients() {
-        List<Client> clients = new ArrayList<>();
+    // Récupère tous les clients de la base (uniquement ceux de type 'client')
+    public java.util.List<Client> getAllClients() {
+        java.util.List<Client> clients = new java.util.ArrayList<>();
         String sql = "SELECT * FROM utilisateur WHERE type = 'client'";
 
         try (Connection conn = DBConnection.getConnexion();
@@ -80,6 +76,7 @@ public class ClientDAO {
         return clients;
     }
 
+    // Supprime un client par son ID (seulement s'il est de type client)
     public boolean deleteClientById(int id) {
         String sql = "DELETE FROM utilisateur WHERE id = ? AND type = 'client'";
 
@@ -95,6 +92,7 @@ public class ClientDAO {
         }
     }
 
+    // Vérifie si un client a des commandes en base (avant suppression)
     public boolean aDesCommandes(int idClient) {
         String sql = "SELECT COUNT(*) FROM commande WHERE id_utilisateur = ?";
 
@@ -115,6 +113,7 @@ public class ClientDAO {
         return false;
     }
 
+    // Met à jour les informations d'un client
     public void updateClient(int id, String nom, String email, String motDePasse) {
         String sql = "UPDATE utilisateur SET nom = ?, email = ?, mot_de_passe = ? WHERE id = ? AND type = 'client'";
 
@@ -131,7 +130,4 @@ public class ClientDAO {
             System.err.println("Erreur mise à jour client : " + e.getMessage());
         }
     }
-
-
-
 }

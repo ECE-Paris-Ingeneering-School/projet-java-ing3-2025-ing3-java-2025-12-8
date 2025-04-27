@@ -1,4 +1,4 @@
-package Vue;
+package Vue; // Déclare le package Vue
 
 import DAO.ArticleDAO;
 import DAO.MarqueDAO;
@@ -10,10 +10,12 @@ import java.awt.*;
 
 public class AjoutArticleFrame extends JFrame {
 
+    // Champs de saisie pour l'ajout d'un article
     private JTextField tfId, tfNom, tfMarqueNom, tfPrixUnitaire, tfPrixGros, tfQuantiteGros, tfIdMarque, tfQuantiteStock;
-    private MarqueDAO marqueDAO;
+    private MarqueDAO marqueDAO; // DAO pour gérer les marques
 
     public AjoutArticleFrame() {
+        // Configuration de la fenêtre
         setTitle("Ajouter un article");
         setSize(400, 450);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -21,9 +23,11 @@ public class AjoutArticleFrame extends JFrame {
 
         marqueDAO = new MarqueDAO();
 
+        // Panel principal avec une grille
         JPanel panel = new JPanel(new GridLayout(9, 2, 10, 10));
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
+        // Création des champs de saisie avec leurs labels
         panel.add(new JLabel("ID de l'article :"));
         tfId = new JTextField();
         panel.add(tfId);
@@ -56,19 +60,23 @@ public class AjoutArticleFrame extends JFrame {
         tfQuantiteStock = new JTextField();
         panel.add(tfQuantiteStock);
 
+        // Bouton pour ajouter l'article
         JButton btnAjouter = new JButton("Ajouter l'article");
         btnAjouter.addActionListener(e -> ajouterArticle());
         panel.add(btnAjouter);
 
+        // Bouton pour voir les marques existantes
         JButton btnVoirMarques = new JButton("Voir les marques existantes");
         btnVoirMarques.addActionListener(e -> afficherMarquesExistantes());
         panel.add(btnVoirMarques);
 
-        add(panel);
+        add(panel); // Ajout du panel à la fenêtre
     }
 
+    // Méthode pour ajouter un nouvel article
     private void ajouterArticle() {
         try {
+            // Récupération et conversion des valeurs des champs
             int id = Integer.parseInt(tfId.getText());
             String nom = tfNom.getText();
             String marqueAffichee = tfMarqueNom.getText();
@@ -79,9 +87,10 @@ public class AjoutArticleFrame extends JFrame {
             int idMarque = Integer.parseInt(tfIdMarque.getText());
             int quantiteStock = Integer.parseInt(tfQuantiteStock.getText());
 
-            // Vérification marque
+            // Vérifie si la marque existe
             Marque marque = marqueDAO.findById(idMarque);
             if (marque == null) {
+                // Demande à l'utilisateur s'il souhaite créer la marque
                 int choix = JOptionPane.showConfirmDialog(this,
                         "La marque avec l'ID " + idMarque + " n'existe pas.\nSouhaitez-vous la créer ?",
                         "Marque inconnue", JOptionPane.YES_NO_OPTION);
@@ -91,7 +100,7 @@ public class AjoutArticleFrame extends JFrame {
 
                     if (nomNouvelleMarque == null || nomNouvelleMarque.trim().isEmpty()) {
                         JOptionPane.showMessageDialog(this, "Création annulée : nom invalide.");
-                        return; // ❌ conserve ce return
+                        return;
                     }
 
                     if (marqueDAO.findById(idMarque) != null) {
@@ -101,21 +110,19 @@ public class AjoutArticleFrame extends JFrame {
 
                     marqueDAO.ajouterMarque(idMarque, nomNouvelleMarque);
                     JOptionPane.showMessageDialog(this, "Marque créée !");
-
-                    // ✅ Ne pas faire de return ici : on veut continuer l'insertion de l'article
+                    // Continue ensuite vers l'ajout de l'article
                 } else {
                     JOptionPane.showMessageDialog(this, "Ajout annulé.");
                     return;
                 }
-
             }
 
-            // Créer l'article
+            // Création de l'article
             Article article = new Article(id, nom, marqueAffichee, prixUnitaire, prixGros, quantiteGros, idMarque, quantiteStock);
             new ArticleDAO().insertArticle(article);
 
             JOptionPane.showMessageDialog(this, "Article ajouté avec succès !");
-            dispose();
+            dispose(); // Ferme la fenêtre après l'ajout
 
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Erreur de saisie : vérifiez les champs numériques.");
@@ -124,6 +131,7 @@ public class AjoutArticleFrame extends JFrame {
         }
     }
 
+    // Méthode pour afficher les marques existantes
     private void afficherMarquesExistantes() {
         java.util.List<Marque> marques = marqueDAO.getAllMarques();
         if (marques.isEmpty()) {
@@ -131,6 +139,7 @@ public class AjoutArticleFrame extends JFrame {
             return;
         }
 
+        // Construction de la liste des marques
         StringBuilder message = new StringBuilder("Marques existantes :\n");
         for (Marque m : marques) {
             message.append("ID: ").append(m.getId())
@@ -144,5 +153,4 @@ public class AjoutArticleFrame extends JFrame {
 
         JOptionPane.showMessageDialog(this, scrollPane, "Liste des marques", JOptionPane.INFORMATION_MESSAGE);
     }
-
 }

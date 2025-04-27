@@ -1,4 +1,4 @@
-package Vue;
+package Vue; // Déclare le package Vue
 
 import DAO.ArticleDAO;
 import Modele.Article;
@@ -12,55 +12,56 @@ import java.util.List;
 
 public class ClientCatalogueFrame extends JFrame {
 
-    private Client client;
-    private Panier panier;
-    private JTable tableArticles;
-    private DefaultTableModel model;
-    private JSpinner spinnerQuantite;
-    private JTextField tfRecherche;
+    private Client client; // Client connecté
+    private Panier panier; // Panier associé au client
+    private JTable tableArticles; // Tableau pour afficher les articles
+    private DefaultTableModel model; // Modèle de données pour le tableau
+    private JSpinner spinnerQuantite; // Sélecteur de quantité
+    private JTextField tfRecherche; // Champ de recherche d'articles
 
     public ClientCatalogueFrame(Client client, Panier panier) {
         this.client = client;
         this.panier = panier;
 
+        // Configuration de la fenêtre
         setTitle("Catalogue - Espace Client");
         setSize(800, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Panel principal
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // ✅ Header combiné recherche + titre
+        // Header : recherche + titre
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
         // Barre de recherche
         JPanel recherchePanel = new JPanel(new BorderLayout());
         recherchePanel.add(new JLabel("Rechercher : "), BorderLayout.WEST);
-
         tfRecherche = new JTextField();
         recherchePanel.add(tfRecherche, BorderLayout.CENTER);
         tfRecherche.addActionListener(e -> filtrerArticles());
 
-        // Titre
+        // Titre du catalogue
         JLabel label = new JLabel("Catalogue des articles", JLabel.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 18));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Ajout des deux dans header
+        // Ajout de la recherche et du titre au header
         headerPanel.add(recherchePanel);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 10))); // espace
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         headerPanel.add(label);
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // ✅ Tableau
+        // Tableau pour afficher les articles
         String[] columns = {"ID", "Nom", "Marque", "Prix Unitaire (€)", "Prix Gros (€)", "Quantité pour prix gros", "Stock"};
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // Empêche la modification des cellules
             }
         };
 
@@ -69,9 +70,9 @@ public class ClientCatalogueFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(tableArticles);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        chargerArticles(); // chargement initial
+        chargerArticles(); // Chargement initial des articles
 
-        // ✅ Bas : Quantité + boutons
+        // Panel bas : sélection de la quantité et boutons
         JPanel panelBas = new JPanel(new FlowLayout());
 
         panelBas.add(new JLabel("Quantité :"));
@@ -88,9 +89,10 @@ public class ClientCatalogueFrame extends JFrame {
 
         panel.add(panelBas, BorderLayout.SOUTH);
 
-        add(panel);
+        add(panel); // Ajout du panel à la fenêtre
     }
 
+    // Charge les articles dans le tableau
     private void chargerArticles() {
         model.setRowCount(0);
         List<Article> articles = new ArticleDAO().getAllArticles();
@@ -107,6 +109,7 @@ public class ClientCatalogueFrame extends JFrame {
         }
     }
 
+    // Filtre les articles selon le texte saisi dans la recherche
     private void filtrerArticles() {
         String recherche = tfRecherche.getText().toLowerCase();
         model.setRowCount(0);
@@ -128,6 +131,7 @@ public class ClientCatalogueFrame extends JFrame {
         }
     }
 
+    // Ajoute l'article sélectionné au panier
     private void ajouterAuPanier() {
         int selectedRow = tableArticles.getSelectedRow();
         if (selectedRow != -1) {

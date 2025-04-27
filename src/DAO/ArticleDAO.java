@@ -12,7 +12,7 @@ public class ArticleDAO {
     public List<Article> getAllArticles() {
         List<Article> articles = new ArrayList<>();
         String sql = """
-        SELECT a.*, m.nom AS nom_marque
+SELECT a.*, m.nom AS nom_marque
         FROM article a
         JOIN marque m ON a.id_marque = m.id
     """;

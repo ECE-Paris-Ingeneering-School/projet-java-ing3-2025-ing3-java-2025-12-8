@@ -12,38 +12,41 @@ import java.util.Map;
 
 public class PanierFrame extends JFrame {
 
-    private Client client;
-    private Panier panier;
-    private JTable table;
-    private JLabel lblTotal;
-    private DefaultTableModel model;
-    private ClientControleur controleur;
+    private Client client; // Client connecté
+    private Panier panier; // Panier du client
+    private JTable table; // Tableau pour afficher les articles du panier
+    private JLabel lblTotal; // Label pour afficher le total
+    private DefaultTableModel model; // Modèle du tableau
+    private ClientControleur controleur; // Contrôleur pour interagir avec les articles
 
     public PanierFrame(Client client, Panier panier) {
         this.client = client;
         this.panier = panier;
         this.controleur = new ClientControleur();
 
+        // Configuration de la fenêtre
         setTitle("Panier - Client");
         setSize(650, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Création du modèle de tableau
         model = new DefaultTableModel(new String[]{"ID", "Nom", "Marque", "Détail prix", "Quantité", "Total (€)"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // Empêche la modification directe des cellules
             }
         };
-
 
         table = new JTable(model);
         table.setRowHeight(25);
         JScrollPane scrollPane = new JScrollPane(table);
 
+        // Label du total
         lblTotal = new JLabel("Total : " + panier.getTotal() + " €");
         lblTotal.setFont(new Font("Arial", Font.BOLD, 16));
 
+        // Boutons
         JButton btnModifierQuantite = new JButton("Modifier quantité");
         btnModifierQuantite.addActionListener(e -> modifierQuantite());
 
@@ -56,6 +59,7 @@ public class PanierFrame extends JFrame {
         JButton btnRetour = new JButton("Retour");
         btnRetour.addActionListener(e -> dispose());
 
+        // Panel du bas avec tous les boutons
         JPanel bas = new JPanel();
         bas.add(lblTotal);
         bas.add(btnModifierQuantite);
@@ -66,9 +70,10 @@ public class PanierFrame extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(bas, BorderLayout.SOUTH);
 
-        rafraichirTableau();
+        rafraichirTableau(); // Chargement initial du panier
     }
 
+    // Rafraîchit le tableau avec les données du panier
     private void rafraichirTableau() {
         model.setRowCount(0);
         for (Map.Entry<Article, Integer> entry : panier.getArticles().entrySet()) {
@@ -78,6 +83,7 @@ public class PanierFrame extends JFrame {
             String detailPrix;
             float totalArticle;
 
+            // Calcul du prix détaillé en fonction du prix gros
             if (a.getPrixGros() != null && a.getQuantiteGros() != null && a.getQuantiteGros() > 0 && qte >= a.getQuantiteGros()) {
                 int groupes = qte / a.getQuantiteGros();
                 int reste = qte % a.getQuantiteGros();
@@ -89,12 +95,12 @@ public class PanierFrame extends JFrame {
                         + (reste > 0 ? " + " + reste + " à " + a.getPrixUnitaire() + " €" : "");
 
                 totalArticle = prixGroupes + prixRestes;
-
             } else {
                 detailPrix = qte + " x " + a.getPrixUnitaire() + " €";
                 totalArticle = qte * a.getPrixUnitaire();
             }
 
+            // Ajout d'une ligne au tableau
             model.addRow(new Object[]{
                     a.getId(),
                     a.getNom(),
@@ -105,10 +111,10 @@ public class PanierFrame extends JFrame {
             });
         }
 
-        lblTotal.setText("Total : " + panier.getTotal() + " €");
+        lblTotal.setText("Total : " + panier.getTotal() + " €"); // Mise à jour du total affiché
     }
 
-
+    // Modifier la quantité d'un article
     private void modifierQuantite() {
         int row = table.getSelectedRow();
         if (row != -1) {
@@ -119,14 +125,14 @@ public class PanierFrame extends JFrame {
                 try {
                     int nouvelleQuantite = Integer.parseInt(input);
                     if (nouvelleQuantite <= 0) {
-                        panier.retirerArticle(article);
+                        panier.retirerArticle(article); // Si quantité <= 0, on retire l'article
                     } else if (nouvelleQuantite > article.getQuantiteStock()) {
                         JOptionPane.showMessageDialog(this, "Stock insuffisant.");
                         return;
                     } else {
                         panier.modifierQuantite(article, nouvelleQuantite);
                     }
-                    rafraichirTableau();
+                    rafraichirTableau(); // Mise à jour du tableau
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Saisie invalide.");
                 }
@@ -136,18 +142,20 @@ public class PanierFrame extends JFrame {
         }
     }
 
+    // Supprimer un article du panier
     private void supprimerArticle() {
         int row = table.getSelectedRow();
         if (row != -1) {
             int id = (int) model.getValueAt(row, 0);
             Article article = controleur.getArticleById(id);
             panier.retirerArticle(article);
-            rafraichirTableau();
+            rafraichirTableau(); // Mise à jour du tableau
         } else {
             JOptionPane.showMessageDialog(this, "Sélectionnez un article à supprimer.");
         }
     }
 
+    // Valider la commande et passer au paiement
     private void validerCommande() {
         if (panier.estVide()) {
             JOptionPane.showMessageDialog(this, "Votre panier est vide.");
@@ -159,9 +167,8 @@ public class PanierFrame extends JFrame {
                 "Confirmation", JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
-            new PaiementFrame(client, panier).setVisible(true);
-            dispose(); // ferme la fenêtre panier
+            new PaiementFrame(client, panier).setVisible(true); // Ouvre la fenêtre de paiement
+            dispose(); // Ferme la fenêtre panier
         }
     }
-
 }

@@ -15,33 +15,37 @@ import java.util.Map;
 
 public class AdminStatsFrame extends JFrame {
 
-    private AdminControleur controleur;
+    private AdminControleur controleur; // Contrôleur pour gérer les actions
 
     public AdminStatsFrame(AdminControleur controleur) {
         this.controleur = controleur;
+
+        // Configuration de la fenêtre
         setTitle("Statistiques de ventes");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Onglets pour les différents types de stats
+        // Création des onglets
         JTabbedPane tabs = new JTabbedPane();
-        tabs.addTab("Top ventes", creerCamembert());
-        tabs.addTab("Chiffre d'affaires", creerHistogrammeCA());
+        tabs.addTab("Top ventes", creerCamembert()); // Onglet camembert
+        tabs.addTab("Chiffre d'affaires", creerHistogrammeCA()); // Onglet histogramme
 
         add(tabs, BorderLayout.CENTER);
 
-        // ✅ Ajouter un bouton retour
+        // Bouton de retour
         JButton btnRetour = new JButton("Retour");
         btnRetour.addActionListener(e -> {
             controleur.retournerAuMenu();
             dispose();
         });
+
         JPanel panelBas = new JPanel();
         panelBas.add(btnRetour);
         add(panelBas, BorderLayout.SOUTH);
     }
 
+    // Méthode pour créer le graphique camembert des meilleures ventes
     private ChartPanel creerCamembert() {
         CommandeDAO dao = new CommandeDAO();
         Map<String, Integer> stats = dao.getArticlesLesPlusVendus();
@@ -60,6 +64,7 @@ public class AdminStatsFrame extends JFrame {
         return new ChartPanel(chart);
     }
 
+    // Méthode pour créer l'histogramme du chiffre d'affaires
     private ChartPanel creerHistogrammeCA() {
         CommandeDAO dao = new CommandeDAO();
         Map<String, Float> statsCA = dao.getChiffreAffairesParArticle();

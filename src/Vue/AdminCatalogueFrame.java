@@ -1,4 +1,4 @@
-package Vue;
+package Vue; // Déclare le package Vue
 
 import Controleur.AdminControleur;
 import DAO.ArticleDAO;
@@ -11,23 +11,25 @@ import java.util.List;
 
 public class AdminCatalogueFrame extends JFrame {
 
-    private JTable tableArticles;
-    private DefaultTableModel model;
-    private JTextField tfRecherche;
-    private AdminControleur controleur;
+    private JTable tableArticles; // Tableau pour afficher les articles
+    private DefaultTableModel model; // Modèle de données pour le tableau
+    private JTextField tfRecherche; // Champ de recherche
+    private AdminControleur controleur; // Contrôleur pour gérer les actions
 
     public AdminCatalogueFrame(AdminControleur controleur) {
         this.controleur = controleur;
 
+        // Configuration de la fenêtre
         setTitle("Catalogue - Admin");
         setSize(800, 500);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        // Création du panel principal
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
-        // ✅ Header combiné : recherche + titre
+        // Header : champ de recherche + titre
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.Y_AXIS));
 
@@ -37,52 +39,55 @@ public class AdminCatalogueFrame extends JFrame {
 
         tfRecherche = new JTextField();
         recherchePanel.add(tfRecherche, BorderLayout.CENTER);
-        tfRecherche.addActionListener(e -> filtrerArticles());
+        tfRecherche.addActionListener(e -> filtrerArticles()); // Action lors de la recherche
 
-        // Titre
+        // Titre du tableau
         JLabel label = new JLabel("Catalogue des articles", JLabel.CENTER);
         label.setFont(new Font("Arial", Font.BOLD, 18));
         label.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Ajout de la recherche et du titre au header
         headerPanel.add(recherchePanel);
-        headerPanel.add(Box.createRigidArea(new Dimension(0, 10))); // espace
+        headerPanel.add(Box.createRigidArea(new Dimension(0, 10))); // Espace entre recherche et titre
         headerPanel.add(label);
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        // ✅ Tableau
+        // Tableau des articles
         String[] columns = {"ID", "Nom", "Marque", "Prix Unitaire (€)", "Prix Gros (€)", "Quantité pour prix gros", "Stock"};
         model = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false;
+                return false; // Empêche la modification directe des cellules
             }
         };
 
         tableArticles = new JTable(model);
-        tableArticles.setRowHeight(25);
+        tableArticles.setRowHeight(25); // Hauteur des lignes
         JScrollPane scrollPane = new JScrollPane(tableArticles);
         panel.add(scrollPane, BorderLayout.CENTER);
 
+        // Chargement des articles dans le tableau
         chargerArticles();
 
-        // ✅ Bas : boutons + retour
+        // Panel du bas avec le bouton Retour
         JPanel panelBas = new JPanel(new FlowLayout());
 
         JButton btnRetour = new JButton("Retour");
         btnRetour.addActionListener(e -> {
-            controleur.retournerAuMenu();
-            dispose();
+            controleur.retournerAuMenu(); // Retour au menu principal
+            dispose(); // Ferme la fenêtre actuelle
         });
 
         panelBas.add(btnRetour);
         panel.add(panelBas, BorderLayout.SOUTH);
 
-        add(panel);
+        add(panel); // Ajout du panel principal à la fenêtre
     }
 
+    // Méthode pour charger tous les articles dans le tableau
     private void chargerArticles() {
-        model.setRowCount(0);
+        model.setRowCount(0); // Vide le tableau
         List<Article> articles = new ArticleDAO().getAllArticles();
         for (Article a : articles) {
             model.addRow(new Object[]{
@@ -97,9 +102,10 @@ public class AdminCatalogueFrame extends JFrame {
         }
     }
 
+    // Méthode pour filtrer les articles selon la recherche
     private void filtrerArticles() {
         String recherche = tfRecherche.getText().toLowerCase();
-        model.setRowCount(0);
+        model.setRowCount(0); // Vide le tableau avant de remplir avec les résultats filtrés
 
         for (Article a : new ArticleDAO().getAllArticles()) {
             if (a.getNom().toLowerCase().contains(recherche) ||
